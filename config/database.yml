@@ -17,7 +17,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: localhost
+  host: <%= ENV['DATABASE_HOST'] || 'localhost' %>
   port: 5432
   username: rails_dev
   password: aAnetsh@echo77
