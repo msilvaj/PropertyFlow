@@ -97,3 +97,44 @@ function App() {
 
 export default App;
 ```
+
+---
+
+## 4. (Optional) Run React with Docker
+
+To run your frontend in Docker alongside Rails, follow these steps.
+
+### Step 4.1: Create Frontend Dockerfile
+Inside `property-flow-web/Dockerfile`:
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host"]
+```
+
+### Step 4.2: Update docker-compose.yml
+Add the `frontend` service to your main `docker-compose.yml`:
+
+```yaml
+  frontend:
+    build: ./property-flow-web
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./property-flow-web:/app
+      - /app/node_modules
+    depends_on:
+      - web
+```
+
+### Step 4.3: Start Everything
+```bash
+docker-compose up --build
+```
+Now you have:
+*   Frontend: `http://localhost:5173`
+*   Backend: `http://localhost:3000`
