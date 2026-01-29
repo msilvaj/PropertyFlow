@@ -38,7 +38,7 @@ end
 We will use **Vite** for a fast, modern setup.
 
 ### Step 2.1: Initialize Project
-Run this command in the parent directory (outside `kitnet-edparaiba`):
+Run this command inside your project folder (`kitnet-edparaiba`):
 ```bash
 npm create vite@latest property-flow-web -- --template react
 cd property-flow-web
