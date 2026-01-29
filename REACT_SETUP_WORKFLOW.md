@@ -107,7 +107,7 @@ To run your frontend in Docker alongside Rails, follow these steps.
 ### Step 4.1: Create Frontend Dockerfile
 Inside `property-flow-web/Dockerfile`:
 ```dockerfile
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
