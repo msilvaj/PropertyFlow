@@ -18,5 +18,14 @@ services:
       - db
     environment:
       DATABASE_HOST: db
+  frontend:
+    build: ./property-flow-web
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./property-flow-web:/app
+      - /app/node_modules
+    depends_on:
+      - web
 volumes:
   postgres_data:
