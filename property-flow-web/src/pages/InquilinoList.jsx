@@ -53,8 +53,37 @@ const InquilinoList = () => {
                     <tbody>
                         {tenants.map(tenant => (
                             <tr key={tenant.id}>
-                                <td style={{ fontWeight: 'bold', color: 'var(--primary)' }}>{tenant.ap}</td>
-                                <td>{tenant.nome}</td>
+                                <td style={{ minWidth: '150px' }}>
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+                                        {tenant.properties && tenant.properties.length > 0 ? (
+                                            tenant.properties.map(prop => (
+                                                <div
+                                                    key={prop.id}
+                                                    style={{
+                                                        fontSize: '0.75rem',
+                                                        padding: '2px 6px',
+                                                        borderRadius: '4px',
+                                                        background: 'var(--primary-light, #e0f2fe)',
+                                                        color: 'var(--primary)',
+                                                        border: '1px solid var(--primary)',
+                                                        display: 'flex',
+                                                        flexDirection: 'column'
+                                                    }}
+                                                >
+                                                    <span style={{ fontWeight: 'bold' }}>{prop.identifier}</span>
+                                                    {prop.condominium && (
+                                                        <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>
+                                                            {prop.condominium.name}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <span style={{ color: 'var(--text-muted)', fontSize: '0.875rem italic' }}>Sem imóvel</span>
+                                        )}
+                                    </div>
+                                </td>
+                                <td style={{ fontWeight: '500' }}>{tenant.nome}</td>
                                 <td style={{ color: 'var(--text-muted)' }}>{tenant.cpf}</td>
                                 <td>{tenant.telefone}</td>
                                 <td>{new Date(tenant.dataInicio).toLocaleDateString()}</td>

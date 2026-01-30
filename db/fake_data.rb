@@ -3,6 +3,8 @@ puts "Cleaning up database..."
 Pagamento.destroy_all
 Mensalidade.destroy_all
 Whatsapp.destroy_all
+Property.destroy_all
+Condominium.destroy_all
 Inquilino.destroy_all
 User.destroy_all
 
@@ -16,67 +18,94 @@ User.create!(
   admin: true
 )
 
-# 2. Create Tenants (Inquilinos) with varying statuses
-puts "Creating tenants..."
+# 2. Create Condominiums
+puts "Creating condominiums..."
+ed_paraiba = Condominium.create!(name: 'Edifício Paraíba', address: 'Rua das Flores, 123')
+village_solar = Condominium.create!(name: 'Village Solar', address: 'Av. Brasil, 456')
+
+# 3. Create Tenants and Assign Properties
+puts "Creating tenants and properties..."
 tenants_data = [
-  { nome: 'João Pertile', ap: '101', telefone: '5511999999999', dataVencimento: Date.today.beginning_of_month },
-  { nome: 'Maria Souza', ap: '102', telefone: '5511888888888', dataVencimento: Date.today.beginning_of_month + 5.days },
-  { nome: 'Carlos Edu', ap: '201', telefone: '5511777777777', dataVencimento: Date.today.beginning_of_month + 10.days },
-  { nome: 'Ana Costa', ap: '202', telefone: '5511666666666', dataVencimento: Date.today.beginning_of_month + 15.days }
+  { 
+    nome: 'João Pertile', 
+    telefone: '5511999999999', 
+    properties: [
+      { identifier: '101', type: 'apartment', condo: ed_paraiba },
+      { identifier: '103', type: 'apartment', condo: ed_paraiba }
+    ]
+  },
+  { 
+    nome: 'Maria Souza', 
+    telefone: '5511888888888', 
+    properties: [
+      { identifier: '102', type: 'apartment', condo: ed_paraiba }
+    ]
+  },
+  { 
+    nome: 'Carlos Edu', 
+    telefone: '5511777777777', 
+    properties: [
+      { identifier: '201', type: 'apartment', condo: village_solar }
+    ]
+  },
+  { 
+    nome: 'Ana Costa', 
+    telefone: '5511666666666', 
+    properties: [
+      { identifier: 'Casa de Praia', type: 'house', condo: nil }
+    ]
+  }
 ]
 
 tenants_data.each do |data|
   tenant = Inquilino.create!(
     nome: data[:nome],
-    ap: data[:ap],
     telefone: data[:telefone],
     cpf: "123.456.789-#{rand(10..99)}",
     rg: "#{rand(10000..99999)}",
     dataInicio: Date.today - 6.months,
-    dataVencimento: data[:dataVencimento],
+    dataVencimento: Date.today.beginning_of_month + rand(1..15).days,
     pago: true
   )
 
-  # 3. Create WhatsApp info
+  data[:properties].each do |p_data|
+    Property.create!(
+      identifier: p_data[:identifier],
+      property_type: p_data[:type],
+      condominium: p_data[:condo],
+      inquilino: tenant
+    )
+  end
+
+  # WhatsApp info (use first property as address)
+  main_prop = data[:properties].first
   Whatsapp.create!(
     inquilino: tenant,
     numero: tenant.telefone,
-    endereco: "Rua Exemplo, #{tenant.ap}"
+    endereco: "#{main_prop[:condo]&.name || 'Standalone'} - #{main_prop[:identifier]}"
   )
 
-  # 4. Create Monthly Installments (Mensalidades)
-  puts "Creating installments for #{tenant.nome}..."
+  # Create Installments
   (-6..6).each do |i|
     month_date = Date.today.beginning_of_month + i.months
+    is_paid = i < 0 ? (rand < 0.9) : (i == 0 ? (rand < 0.5) : false)
     
-    is_paid = true
-    if i < 0
-      is_paid = rand < 0.9 # High chance of past months being paid
-    elsif i == 0
-      is_paid = rand < 0.5 # 50% chance for current month
-    else
-      is_paid = false # Future months are unpaid
-    end
-
-    Mensalidade.create!(
-      inquilino: tenant,
-      mes: month_date,
-      pago: is_paid
-    )
-    
-    Pagamento.create!(
-      inquilino: tenant,
-      mes: month_date.to_s,
-      pago: is_paid
-    )
+    Mensalidade.create!(inquilino: tenant, mes: month_date, pago: is_paid)
+    Pagamento.create!(inquilino: tenant, mes: month_date.to_s, pago: is_paid)
   end
   
-  # Update tenant 'pago' status based on current month
+  # Sync payment status
   current_month_paid = tenant.mensalidades.find { |m| m.mes.year == Date.today.year && m.mes.month == Date.today.month }&.pago
   tenant.update!(pago: !!current_month_paid)
 end
 
-puts "Database seeded successfully with custom fake data!"
+# Create some vacant properties
+puts "Creating vacant properties..."
+Property.create!(identifier: '104', property_type: 'apartment', condominium: ed_paraiba)
+Property.create!(identifier: '202', property_type: 'apartment', condominium: village_solar)
+
+puts "Database seeded successfully!"
 puts "Created #{User.count} Users"
 puts "Created #{Inquilino.count} Inquilinos"
-puts "Created #{Mensalidade.count} Mensalidades"
+puts "Created #{Property.count} Properties"
+puts "Created #{Condominium.count} Condominiums"

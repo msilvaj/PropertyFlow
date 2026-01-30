@@ -83,6 +83,18 @@ export const deleteTenant = async (id) => {
   return true;
 };
 
+// Properties
+export const fetchProperties = async () => {
+  const response = await fetch(`${API_URL}/properties.json`, { ...defaultOptions });
+  return handleResponse(response);
+};
+
+// Condominiums
+export const fetchCondominiums = async () => {
+  const response = await fetch(`${API_URL}/condominiums.json`, { ...defaultOptions });
+  return handleResponse(response);
+};
+
 // Installments (Mensalidades)
 export const updateInstallment = async (id, data) => {
   const response = await fetch(`${API_URL}/mensalidades/${id}.json`, {

@@ -7,24 +7,31 @@ const InquilinoForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [properties, setProperties] = useState([]);
     const [formData, setFormData] = useState({
         nome: '',
         cpf: '',
         rg: '',
         telefone: '',
-        ap: '',
         codigoEletrobras: '',
         dataInicio: '',
         dataFim: '',
         dataVencimento: '',
-        pago: false
+        pago: false,
+        property_ids: []
     });
 
     useEffect(() => {
+        fetchProperties().then(data => setProperties(data));
         if (id) {
             setLoading(true);
             fetchTenant(id)
-                .then(data => setFormData(data))
+                .then(data => {
+                    setFormData({
+                        ...data,
+                        property_ids: data.properties ? data.properties.map(p => p.id) : []
+                    });
+                })
                 .catch(err => console.error(err))
                 .finally(() => setLoading(false));
         }
@@ -33,12 +40,27 @@ const InquilinoForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         setLoading(true);
-        const apiCall = id ? updateTenant(id, formData) : createTenant(formData);
+        // Ensure we only send necessary data and property_ids
+        const submissionData = { ...formData };
+        delete submissionData.properties; // Remove the expanded properties array
+
+        const apiCall = id ? updateTenant(id, submissionData) : createTenant(submissionData);
 
         apiCall
             .then(() => navigate('/tenants'))
             .catch(err => alert(err.message))
             .finally(() => setLoading(false));
+    };
+
+    const handlePropertyToggle = (propertyId) => {
+        setFormData(prev => {
+            const currentIds = prev.property_ids || [];
+            if (currentIds.includes(propertyId)) {
+                return { ...prev, property_ids: currentIds.filter(id => id !== propertyId) };
+            } else {
+                return { ...prev, property_ids: [...currentIds, propertyId] };
+            }
+        });
     };
 
     const handleChange = (e) => {
@@ -52,7 +74,7 @@ const InquilinoForm = () => {
     if (loading && id) return <div className="loading">Carregando detalhes do inquilino...</div>;
 
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
             <button
                 onClick={() => navigate('/tenants')}
                 className="btn"
@@ -75,7 +97,7 @@ const InquilinoForm = () => {
                                 name="nome"
                                 style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
                                 placeholder="John Doe"
-                                value={formData.nome}
+                                value={formData.nome || ''}
                                 onChange={handleChange}
                                 required
                             />
@@ -89,7 +111,7 @@ const InquilinoForm = () => {
                             name="cpf"
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
                             placeholder="000.000.000-00"
-                            value={formData.cpf}
+                            value={formData.cpf || ''}
                             onChange={handleChange}
                         />
                     </div>
@@ -100,24 +122,56 @@ const InquilinoForm = () => {
                             type="text"
                             name="rg"
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
-                            value={formData.rg}
+                            value={formData.rg || ''}
                             onChange={handleChange}
                         />
                     </div>
 
-                    <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Apartamento (AP)</label>
-                        <div style={{ position: 'relative' }}>
-                            <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
-                            <input
-                                type="text"
-                                name="ap"
-                                style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
-                                placeholder="101"
-                                value={formData.ap}
-                                onChange={handleChange}
-                                required
-                            />
+                    <div style={{ gridColumn: 'span 2' }}>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Imóveis Alugados</label>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                            gap: '0.75rem',
+                            padding: '1rem',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '0.5rem',
+                            maxHeight: '200px',
+                            overflowY: 'auto'
+                        }}>
+                            {properties.map(prop => {
+                                const isAssignedToOther = prop.inquilino_id && prop.inquilino_id !== parseInt(id);
+                                const isSelected = (formData.property_ids || []).includes(prop.id);
+
+                                return (
+                                    <div
+                                        key={prop.id}
+                                        onClick={() => !isAssignedToOther && handlePropertyToggle(prop.id)}
+                                        style={{
+                                            padding: '0.5rem',
+                                            borderRadius: '0.375rem',
+                                            border: `2px solid ${isSelected ? 'var(--primary)' : 'transparent'}`,
+                                            background: isSelected ? 'var(--primary-light)' : 'var(--bg-card)',
+                                            cursor: isAssignedToOther ? 'not-allowed' : 'pointer',
+                                            opacity: isAssignedToOther ? 0.5 : 1,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            boxShadow: 'var(--shadow-sm)'
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ fontWeight: 'bold', fontSize: '0.875rem' }}>{prop.identifier}</span>
+                                            {isSelected && <CreditCard size={14} style={{ color: 'var(--primary)' }} />}
+                                        </div>
+                                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                            {prop.condominium ? prop.condominium.name : 'Sem Condomínio'}
+                                        </span>
+                                        {isAssignedToOther && (
+                                            <span style={{ fontSize: '0.65rem', color: 'var(--danger)', marginTop: '0.25rem' }}>Ocupado</span>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -130,7 +184,7 @@ const InquilinoForm = () => {
                                 name="telefone"
                                 style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
                                 placeholder="(00) 00000-0000"
-                                value={formData.telefone}
+                                value={formData.telefone || ''}
                                 onChange={handleChange}
                             />
                         </div>
@@ -144,7 +198,7 @@ const InquilinoForm = () => {
                                 type="date"
                                 name="dataInicio"
                                 style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
-                                value={formData.dataInicio}
+                                value={formData.dataInicio ? formData.dataInicio.substring(0, 10) : ''}
                                 onChange={handleChange}
                                 required
                             />
@@ -152,14 +206,14 @@ const InquilinoForm = () => {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Dia de Vencimento</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Próximo Vencimento</label>
                         <div style={{ position: 'relative' }}>
                             <CreditCard size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
                             <input
                                 type="date"
                                 name="dataVencimento"
                                 style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
-                                value={formData.dataVencimento}
+                                value={formData.dataVencimento ? formData.dataVencimento.substring(0, 10) : ''}
                                 onChange={handleChange}
                                 required
                             />
@@ -172,7 +226,7 @@ const InquilinoForm = () => {
                             type="text"
                             name="codigoEletrobras"
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--border-color)' }}
-                            value={formData.codigoEletrobras}
+                            value={formData.codigoEletrobras || ''}
                             onChange={handleChange}
                         />
                     </div>

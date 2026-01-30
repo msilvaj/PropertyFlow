@@ -10,17 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_08_135724) do
+ActiveRecord::Schema.define(version: 2026_01_30_090546) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "condominia", force: :cascade do |t|
+    t.string "name"
+    t.string "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "inquilinos", force: :cascade do |t|
     t.string "nome"
     t.string "cpf"
     t.string "rg"
     t.string "telefone"
-    t.string "ap"
     t.string "codigoEletrobras"
     t.date "dataInicio"
     t.date "dataFim"
@@ -48,6 +54,18 @@ ActiveRecord::Schema.define(version: 2019_07_08_135724) do
     t.index ["inquilino_id"], name: "index_pagamentos_on_inquilino_id"
   end
 
+  create_table "properties", force: :cascade do |t|
+    t.string "identifier"
+    t.string "property_type"
+    t.text "description"
+    t.bigint "condominium_id"
+    t.bigint "inquilino_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["condominium_id"], name: "index_properties_on_condominium_id"
+    t.index ["inquilino_id"], name: "index_properties_on_inquilino_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.boolean "admin"
     t.string "name"
@@ -73,5 +91,7 @@ ActiveRecord::Schema.define(version: 2019_07_08_135724) do
 
   add_foreign_key "mensalidades", "inquilinos"
   add_foreign_key "pagamentos", "inquilinos"
+  add_foreign_key "properties", "condominia"
+  add_foreign_key "properties", "inquilinos"
   add_foreign_key "whatsapps", "inquilinos"
 end
