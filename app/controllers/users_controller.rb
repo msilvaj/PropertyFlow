@@ -1,8 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-  skip_before_action :authenticate_user!, only: [:index]
   load_and_authorize_resource
-  skip_load_and_authorize_resource only: [:index]
 
   # GET /users
   # GET /users.json

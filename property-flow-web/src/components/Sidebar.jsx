@@ -1,7 +1,18 @@
 import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Users, CreditCard, Settings, LogOut, Home } from 'lucide-react';
+import { logout } from '../services/api';
 
-const Sidebar = () => {
+const Sidebar = ({ onLogout }) => {
+    const handleLogoutClick = async () => {
+        try {
+            await logout();
+            onLogout();
+        } catch (err) {
+            console.error("Logout failed", err);
+            onLogout(); // Still clear state if possible
+        }
+    };
+
     return (
         <aside className="sidebar">
             <div className="sidebar-logo">
@@ -32,9 +43,13 @@ const Sidebar = () => {
             </nav>
 
             <div style={{ marginTop: 'auto' }}>
-                <button className="nav-link" style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                <button
+                    className="nav-link"
+                    onClick={handleLogoutClick}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
+                >
                     <LogOut size={20} />
-                    <span>Sign Out</span>
+                    <span>Sair</span>
                 </button>
             </div>
         </aside>
