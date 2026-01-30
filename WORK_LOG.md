@@ -38,6 +38,13 @@ We needed to bootstrap an admin user ("super user") but faced issues with the Sp
     *   Leveraged the existing "Edit User" form which already had an "Admin" checkbox.
     *   **Security**: Added `load_and_authorize_resource` to `UsersController`. This ensures that **only** existing admins can access the user list or edit profiles. Regular users are blocked from accessing these pages.
 
+### 3. Temporary Frontend Fix
+*   **Goal**: Allow the React frontend to fetch the users list for development/testing without having a login flow yet.
+*   **Changes**:
+    *   **Controller**: Updated `UsersController` to skip authentication and authorization for the `index` action.
+    *   **Model**: Updated `Ability` to handle guest users (nil) by initializing a new `User` object for checks.
+*   **[WARNING]**: This is a temporary bypass for development. See `walkthrough.md` for instructions on how to undo this before production.
+
 ---
 
 ## 🔗 How to Use
