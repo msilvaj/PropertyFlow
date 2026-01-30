@@ -1,5 +1,6 @@
 class WhatsappsController < ApplicationController
   before_action :set_whatsapp, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_user!, only: [:index, :show, :create, :update, :destroy]
 
   # GET /whatsapps
   # GET /whatsapps.json

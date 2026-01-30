@@ -1,5 +1,6 @@
 class PagamentosController < ApplicationController
   before_action :set_pagamento, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_user!, only: [:index, :show, :create, :update, :destroy]
 
   # GET /pagamentos
   # GET /pagamentos.json

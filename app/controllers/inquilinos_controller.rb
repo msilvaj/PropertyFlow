@@ -1,5 +1,6 @@
 class InquilinosController < ApplicationController
   before_action :set_inquilino, only: [:show, :edit, :update, :destroy]
+  skip_before_action :authenticate_user!, only: [:index, :show, :create, :update, :destroy]
   #before_action :calcula_pagamento, only: [:show, :edit, :update, :destroy]
 
 
