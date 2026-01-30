@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  respond_to :html, :json
   protect_from_forgery with: :exception
   skip_before_action :verify_authenticity_token, if: -> { request.format.json? }
   before_action :set_locale
