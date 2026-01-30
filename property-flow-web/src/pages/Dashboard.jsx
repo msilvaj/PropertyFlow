@@ -27,7 +27,7 @@ const Dashboard = () => {
                 <div className="card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Total Tenants</p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Total Inquilinos</p>
                             <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{totalTenants}</h2>
                         </div>
                         <div style={{ padding: '0.5rem', background: '#eff6ff', borderRadius: '0.5rem', color: '#3b82f6' }}>
@@ -68,7 +68,7 @@ const Dashboard = () => {
                         <thead>
                             <tr>
                                 <th>AP</th>
-                                <th>Tenant Name</th>
+                                <th>Nome do Inquilino</th>
                                 <th>Status</th>
                                 <th>Phone</th>
                             </tr>

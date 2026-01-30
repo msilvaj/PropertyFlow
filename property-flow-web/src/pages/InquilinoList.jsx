@@ -3,7 +3,7 @@ import { fetchTenants, deleteTenant } from '../services/api';
 import { Plus, Trash2, Edit3, UserPlus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const TenantList = () => {
+const InquilinoList = () => {
     const [tenants, setTenants] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -20,20 +20,20 @@ const TenantList = () => {
     }, []);
 
     const handleDelete = (id) => {
-        if (confirm('Are you sure you want to delete this tenant?')) {
+        if (confirm('Tem certeza que deseja apagar este inquilino?')) {
             deleteTenant(id).then(() => loadTenants());
         }
     };
 
-    if (loading) return <div className="loading">Loading tenants...</div>;
+    if (loading) return <div className="loading">Carregando inquilinos...</div>;
 
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h1 style={{ fontSize: '1.875rem' }}>Tenants Management</h1>
+                <h1 style={{ fontSize: '1.875rem' }}>Gerenciar Inquilinos</h1>
                 <Link to="/tenants/new" className="btn btn-primary">
                     <UserPlus size={18} />
-                    New Tenant
+                    Novo Inquilino
                 </Link>
             </div>
 
@@ -42,12 +42,12 @@ const TenantList = () => {
                     <thead>
                         <tr>
                             <th>AP</th>
-                            <th>Name</th>
+                            <th>Nome</th>
                             <th>CPF</th>
                             <th>Phone</th>
-                            <th>Start Date</th>
+                            <th>Data Início</th>
                             <th>Vencimento</th>
-                            <th>Actions</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,4 +82,4 @@ const TenantList = () => {
     );
 };
 
-export default TenantList;
+export default InquilinoList;

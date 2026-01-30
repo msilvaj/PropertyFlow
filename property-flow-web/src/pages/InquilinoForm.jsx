@@ -3,7 +3,7 @@ import { createTenant, updateTenant, fetchTenant } from '../services/api';
 import { Save, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const TenantForm = () => {
+const InquilinoForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -49,7 +49,7 @@ const TenantForm = () => {
         }));
     };
 
-    if (loading && id) return <div className="loading">Loading tenant details...</div>;
+    if (loading && id) return <div className="loading">Carregando detalhes do inquilino...</div>;
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -59,15 +59,15 @@ const TenantForm = () => {
                 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
                 <ArrowLeft size={18} />
-                Back to List
+                Voltar para Lista
             </button>
 
             <div className="card">
-                <h2 style={{ marginBottom: '2rem' }}>{id ? 'Edit Tenant' : 'Add New Tenant'}</h2>
+                <h2 style={{ marginBottom: '2rem' }}>{id ? 'Editar Inquilino' : 'Adicionar Novo Inquilino'}</h2>
 
                 <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                     <div style={{ gridColumn: 'span 2' }}>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Full Name</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Nome Completo</label>
                         <div style={{ position: 'relative' }}>
                             <User size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
                             <input
@@ -106,7 +106,7 @@ const TenantForm = () => {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Apartment (AP)</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Apartamento (AP)</label>
                         <div style={{ position: 'relative' }}>
                             <MapPin size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
                             <input
@@ -122,7 +122,7 @@ const TenantForm = () => {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Phone</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Telefone</label>
                         <div style={{ position: 'relative' }}>
                             <Phone size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
                             <input
@@ -137,7 +137,7 @@ const TenantForm = () => {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Start Date</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Data de Início</label>
                         <div style={{ position: 'relative' }}>
                             <Calendar size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
                             <input
@@ -152,7 +152,7 @@ const TenantForm = () => {
                     </div>
 
                     <div>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Payment Day</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Dia de Vencimento</label>
                         <div style={{ position: 'relative' }}>
                             <CreditCard size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-muted)' }} />
                             <input
@@ -167,7 +167,7 @@ const TenantForm = () => {
                     </div>
 
                     <div style={{ gridColumn: 'span 2' }}>
-                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Eletrobras Code</label>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem' }}>Código Eletrobras</label>
                         <input
                             type="text"
                             name="codigoEletrobras"
@@ -180,7 +180,7 @@ const TenantForm = () => {
                     <div style={{ gridColumn: 'span 2', marginTop: '1rem' }}>
                         <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '1rem', justifyContent: 'center' }} disabled={loading}>
                             <Save size={20} />
-                            {loading ? 'Saving...' : 'Save Tenant'}
+                            {loading ? 'Salvando...' : 'Salvar Inquilino'}
                         </button>
                     </div>
                 </form>
@@ -189,4 +189,4 @@ const TenantForm = () => {
     );
 };
 
-export default TenantForm;
+export default InquilinoForm;

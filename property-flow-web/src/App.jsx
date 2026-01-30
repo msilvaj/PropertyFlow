@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
-import TenantList from './pages/TenantList';
-import TenantForm from './pages/TenantForm';
+import InquilinoList from './pages/InquilinoList';
+import InquilinoForm from './pages/InquilinoForm';
 import Payments from './pages/Payments';
 import './App.css'; // Minimalist App.css, global styles in index.css
 
@@ -14,9 +14,9 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/tenants" element={<TenantList />} />
-            <Route path="/tenants/new" element={<TenantForm />} />
-            <Route path="/tenants/edit/:id" element={<TenantForm />} />
+            <Route path="/tenants" element={<InquilinoList />} />
+            <Route path="/tenants/new" element={<InquilinoForm />} />
+            <Route path="/tenants/edit/:id" element={<InquilinoForm />} />
             <Route path="/payments" element={<Payments />} />
             <Route path="/users" element={<div>User Settings View (Coming Soon)</div>} />
           </Routes>
